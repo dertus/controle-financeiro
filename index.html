@@ -1,1 +1,140 @@
-add index.html
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0b1220" />
+  <title>Controle Financeiro</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">💰</div>
+      <div>
+        <div class="title">Controle Financeiro</div>
+        <div class="subtitle">Gastos e Parcelas</div>
+      </div>
+    </div>
+
+    <nav class="nav-top">
+      <button class="tab" data-go="#/" data-tab="list">Gastos</button>
+      <button class="tab" data-go="#/novo" data-tab="novo">Novo</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- LISTA -->
+    <section id="view-list" class="view">
+      <div class="row row-tight">
+        <div class="row-left">
+          <select id="filter-month" class="input input-compact"></select>
+        </div>
+        <div class="row-right">
+          <button id="btn-seed" class="btn ghost btn-compact">Exemplos</button>
+        </div>
+      </div>
+
+      <div id="summary" class="summary"></div>
+
+      <div id="expense-list" class="list"></div>
+      <div id="empty" class="empty hidden">
+        <p>Nenhum gasto ainda. Clique em <b>Novo</b> para adicionar.</p>
+      </div>
+    </section>
+
+    <!-- NOVO -->
+    <section id="view-new" class="view hidden">
+      <h1 class="h1">Novo gasto</h1>
+
+      <form id="form-new" class="card card-form">
+        <label class="label">
+          Nome do gasto
+          <input class="input" id="name" required placeholder="Ex.: Notebook, Mercado, Internet" />
+        </label>
+
+        <div class="grid2">
+          <label class="label">
+            Categoria
+            <input class="input" id="category" placeholder="Ex.: Casa, Lazer, Saúde" />
+          </label>
+
+          <label class="label">
+            Data da compra
+            <input class="input" id="purchaseDate" type="date" required />
+          </label>
+        </div>
+
+        <div class="grid2">
+          <label class="label">
+            Valor total (R$)
+            <input class="input" id="totalValue" type="number" min="0" step="0.01" required placeholder="Ex.: 1200.00" />
+          </label>
+
+          <label class="label">
+            Parcelas
+            <input class="input" id="installments" type="number" min="1" step="1" value="1" required />
+            <small class="hint">1 = à vista. &nbsp;>1 = parcelado.</small>
+          </label>
+        </div>
+
+        <div class="grid2">
+          <label class="label">
+            Dia de vencimento (opcional)
+            <input class="input" id="dueDay" type="number" min="1" max="31" placeholder="Ex.: 10" />
+            <small class="hint">Se vazio, usa o dia da compra.</small>
+          </label>
+
+          <label class="label">
+            Observação (opcional)
+            <input class="input" id="notes" placeholder="Ex.: cartão, cashback..." />
+          </label>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn ghost" id="btn-cancel">Cancelar</button>
+          <button type="submit" class="btn primary">Salvar</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- DETALHE -->
+    <section id="view-detail" class="view hidden">
+      <div class="row">
+        <button class="btn ghost" id="btn-back">← Voltar</button>
+        <div class="spacer"></div>
+        <button class="btn danger" id="btn-delete">Excluir</button>
+      </div>
+
+      <div id="detail-header" class="card card-detail"></div>
+
+      <div class="row row-tight">
+        <h2 class="h2">Parcelas</h2>
+        <div class="row-right">
+          <button class="btn ghost btn-compact" id="btn-mark-all">Marcar todas pagas</button>
+          <button class="btn ghost btn-compact" id="btn-unmark-all">Desmarcar</button>
+        </div>
+      </div>
+
+      <div id="installment-list" class="list"></div>
+    </section>
+  </main>
+
+  <!-- Barra inferior estilo app -->
+  <nav class="bottom-nav" aria-label="Navegação">
+    <button class="bottom-btn" data-go="#/" data-tab="list">
+      <span class="bottom-ico">📄</span>
+      <span class="bottom-txt">Gastos</span>
+    </button>
+    <button class="bottom-btn" data-go="#/novo" data-tab="novo">
+      <span class="bottom-ico">➕</span>
+      <span class="bottom-txt">Novo</span>
+    </button>
+  </nav>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
+
