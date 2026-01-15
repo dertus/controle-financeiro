@@ -1,4 +1,3 @@
-add db.js
 const DB_NAME = "finance_app_db";
 const DB_VERSION = 1;
 
@@ -129,10 +128,7 @@ export async function toggleInstallmentPaid(installmentId, paid) {
     req.onerror = () => reject(req.error);
   });
 
-  if (!inst) {
-    db.close();
-    return;
-  }
+  if (!inst) { db.close(); return; }
 
   inst.paid = paid;
   inst.paidAt = paid ? new Date().toISOString() : null;
@@ -195,4 +191,3 @@ export async function clearAll() {
   await txDone(tx);
   db.close();
 }
-
