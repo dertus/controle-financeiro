@@ -1,5 +1,5 @@
-add sw.js
-const CACHE = "finance-app-cache-v1";
+vadd sw.js
+const CACHE = "finance-app-cache-v4";
 const ASSETS = [
   "./",
   "./index.html",
