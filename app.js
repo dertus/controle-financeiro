@@ -1,4 +1,3 @@
-add app.js
 import {
   addExpenseWithInstallments,
   listExpensesByMonth,
@@ -42,6 +41,33 @@ function addMonthsKeepingDay(baseISO, monthsToAdd, dueDayOpt) {
   return toISODate(new Date(base.getFullYear(), base.getMonth(), day));
 }
 
+function formatBRDate(iso) {
+  const [y, m, d] = iso.split("-");
+  return `${d}/${m}/${y}`;
+}
+
+function escapeHtml(str) {
+  return String(str ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function pickIcon(category, name) {
+  const text = `${category || ""} ${name || ""}`.toLowerCase();
+  if (text.includes("internet") || text.includes("wifi")) return "📶";
+  if (text.includes("mercado") || text.includes("super") || text.includes("alimenta")) return "🛒";
+  if (text.includes("notebook") || text.includes("pc") || text.includes("comput")) return "💻";
+  if (text.includes("casa") || text.includes("aluguel") || text.includes("condom")) return "🏠";
+  if (text.includes("carro") || text.includes("uber") || text.includes("gas")) return "🚗";
+  if (text.includes("saúde") || text.includes("farm") || text.includes("med")) return "💊";
+  if (text.includes("lazer") || text.includes("cinema") || text.includes("game")) return "🎮";
+  if (text.includes("cartão") || text.includes("credito") || text.includes("crédito")) return "💳";
+  return "🧾";
+}
+
 /* ---------- service worker ---------- */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
@@ -78,21 +104,27 @@ function showView(name) {
 
 function route() {
   const hash = location.hash || "#/";
+
   if (hash === "#/" || hash === "#") {
     showView("list");
     renderList();
     return;
   }
+
   if (hash === "#/novo") {
     showView("novo");
+    // foco automático ajuda a perceber que está clicável
+    setTimeout(() => $("#name")?.focus(), 50);
     return;
   }
+
   if (hash.startsWith("#/gasto/")) {
     showView("detail");
     const id = hash.split("/")[2];
     renderDetail(id);
     return;
   }
+
   location.hash = "#/";
 }
 
@@ -119,16 +151,11 @@ function buildMonthOptions() {
 monthSelect.addEventListener("change", () => renderList());
 
 /* ---------- nav buttons ---------- */
-document.querySelectorAll("[data-go]").forEach(btn => {
-  btn.addEventListener("click", () => (location.hash = btn.getAttribute("data-go")));
-});
-
 $("#btn-cancel").addEventListener("click", () => (location.hash = "#/"));
 
 /* ---------- create expense ---------- */
 function setTodayInForm() {
-  const today = toISODate(new Date());
-  $("#purchaseDate").value = today;
+  $("#purchaseDate").value = toISODate(new Date());
 }
 setTodayInForm();
 
@@ -142,6 +169,8 @@ $("#form-new").addEventListener("submit", async (ev) => {
   const installmentsCount = Math.max(1, Number($("#installments").value || 1));
   const dueDay = $("#dueDay").value ? Number($("#dueDay").value) : null;
   const notes = $("#notes").value.trim();
+
+  if (!name || !purchaseDate || !(totalValue >= 0)) return;
 
   const id = uid();
   const monthKey = monthKeyFromISO(purchaseDate);
@@ -180,10 +209,12 @@ $("#form-new").addEventListener("submit", async (ev) => {
 
   await addExpenseWithInstallments(expense, installments);
 
+  // reset
   $("#form-new").reset();
   setTodayInForm();
   $("#installments").value = "1";
 
+  // volta para lista
   location.hash = "#/";
 });
 
@@ -202,11 +233,11 @@ async function renderList() {
 
   emptyEl.classList.add("hidden");
 
-  // resumo do mês (parcelas pelo vencimento do mês selecionado)
+  // resumo do mês (parcelas com vencimento no mês selecionado)
   let totalDue = 0;
   let totalPaid = 0;
 
-  for (const [_, s] of stats.entries()) {
+  for (const s of stats.values()) {
     const thisMonth = s.installments.filter(x => x.monthKey === mk);
     totalDue += thisMonth.reduce((a, b) => a + (Number(b.value) || 0), 0);
     totalPaid += thisMonth.filter(x => x.paid).reduce((a, b) => a + (Number(b.value) || 0), 0);
@@ -229,13 +260,12 @@ async function renderList() {
     </div>
   `;
 
-  const ordered = [...expenses].sort((a, b) => (b.purchaseDate.localeCompare(a.purchaseDate)));
+  const ordered = [...expenses].sort((a, b) => b.purchaseDate.localeCompare(a.purchaseDate));
 
   listEl.innerHTML = ordered.map(e => {
     const s = stats.get(e.id);
     const paid = s?.paid ?? 0;
     const total = s?.total ?? e.installmentsCount;
-
     const icon = pickIcon(e.category, e.name);
 
     return `
@@ -285,23 +315,23 @@ async function renderDetail(expenseId) {
   const icon = pickIcon(expense.category, expense.name);
 
   $("#detail-header").innerHTML = `
-    <div class="detail-top">
-      <div class="detail-left">
-        <div class="detail-title">
-          <span class="detail-icon" aria-hidden="true">${icon}</span>
+    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start;">
+      <div>
+        <div style="display:flex;gap:10px;align-items:center;font-weight:950;font-size:18px;letter-spacing:.2px;">
+          <span style="width:40px;height:40px;display:grid;place-items:center;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--line);box-shadow:0 16px 40px rgba(0,0,0,.25);">${icon}</span>
           <span>${escapeHtml(expense.name)}</span>
         </div>
-        <div class="detail-badges">
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
           <span class="badge">${escapeHtml(expense.category || "Sem categoria")}</span>
           <span class="badge">Compra: ${formatBRDate(expense.purchaseDate)}</span>
           <span class="badge">Parcelas: ${paidCount}/${total}</span>
         </div>
-        ${expense.notes ? `<div class="detail-notes">${escapeHtml(expense.notes)}</div>` : ""}
+        ${expense.notes ? `<div style="margin-top:10px;color:var(--muted);font-size:13px;">${escapeHtml(expense.notes)}</div>` : ""}
       </div>
 
-      <div class="detail-right">
-        <div class="detail-total">${fmtBRL(expense.totalValue)}</div>
-        <div class="detail-per">${fmtBRL(expense.perInstallment)} / parcela</div>
+      <div style="text-align:right;">
+        <div style="font-weight:950;font-size:18px;letter-spacing:.2px;">${fmtBRL(expense.totalValue)}</div>
+        <div style="color:var(--muted);font-size:12px;margin-top:6px;">${fmtBRL(expense.perInstallment)} / parcela</div>
       </div>
     </div>
   `;
@@ -407,53 +437,9 @@ $("#btn-seed").addEventListener("click", async () => {
   renderList();
 });
 
-/* ---------- misc ---------- */
-function formatBRDate(iso) {
-  const [y, m, d] = iso.split("-");
-  return `${d}/${m}/${y}`;
-}
-
-function escapeHtml(str) {
-  return String(str ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function pickIcon(category, name) {
-  const text = `${category || ""} ${name || ""}`.toLowerCase();
-
-  if (text.includes("internet") || text.includes("wifi")) return "📶";
-  if (text.includes("mercado") || text.includes("super") || text.includes("alimenta")) return "🛒";
-  if (text.includes("notebook") || text.includes("pc") || text.includes("comput")) return "💻";
-  if (text.includes("casa") || text.includes("aluguel") || text.includes("condom")) return "🏠";
-  if (text.includes("carro") || text.includes("uber") || text.includes("gas")) return "🚗";
-  if (text.includes("saúde") || text.includes("farm") || text.includes("med")) return "💊";
-  if (text.includes("lazer") || text.includes("cinema") || text.includes("game")) return "🎮";
-  if (text.includes("cartão") || text.includes("credito") || text.includes("crédito")) return "💳";
-  return "🧾";
-}
-
-// estilos do header do detalhe (sem precisar mexer no CSS grande)
-const style = document.createElement("style");
-style.textContent = `
-  .detail-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;}
-  .detail-title{display:flex;gap:10px;align-items:center;font-weight:950;font-size:18px;letter-spacing:.2px;}
-  .detail-icon{width:40px;height:40px;display:grid;place-items:center;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--line);box-shadow:0 16px 40px rgba(0,0,0,.25);font-size:18px;}
-  .detail-badges{color:var(--muted);font-size:12px;margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;}
-  .detail-notes{margin-top:10px;color:var(--muted);font-size:13px;}
-  .detail-right{text-align:right;}
-  .detail-total{font-weight:950;font-size:18px;letter-spacing:.2px;}
-  .detail-per{color:var(--muted);font-size:12px;margin-top:6px;}
-`;
-document.head.appendChild(style);
-
 /* ---------- boot ---------- */
 buildMonthOptions();
 route();
 
-// debug helper (opcional): limpar tudo pelo console
+// debug helper
 window.__clearAll = clearAll;
-
