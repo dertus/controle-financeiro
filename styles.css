@@ -386,3 +386,37 @@ select,
 /* Links com cara de botão */
 a.tab, a.bottom-btn {
   text-decoration: none;
+
+  /* ==== FIX: FORMULÁRIO "NOVO" NÃO CLICÁVEL ==== */
+
+/* garante que a tela e o form ficam "por cima" e clicáveis */
+#view-new, #view-new * {
+  pointer-events: auto !important;
+}
+
+#view-new {
+  position: relative !important;
+  z-index: 2000 !important;
+}
+
+/* garante que o form recebe clique */
+#form-new, #form-new * {
+  pointer-events: auto !important;
+}
+
+/* evita algum overlay invisível capturar o clique */
+.container, .view {
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* barra de baixo não pode "cobrir" o form */
+.bottom-nav {
+  z-index: 50 !important;
+}
+
+/* inputs sempre clicáveis e visíveis */
+input, select, button, textarea {
+  pointer-events: auto !important;
+}
+
