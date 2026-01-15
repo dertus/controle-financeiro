@@ -374,10 +374,6 @@ select,
 }
 
 /* evita algo ficar invisível */
-.view {
-  display: block;
-}
-
 .view.hidden {
   display: none !important;
 }
