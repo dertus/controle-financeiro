@@ -326,3 +326,59 @@ body{
   .item-title{ font-size: 17px; }
   .iconbox{ width:46px; height:46px; border-radius: 16px; }
 }
+/* ==== FIX GERAL DE VISIBILIDADE ==== */
+
+/* garante fundo escuro */
+html, body {
+  background: #0b1220 !important;
+  color: #e5e7eb !important;
+}
+
+/* container principal */
+.container {
+  background: transparent !important;
+}
+
+/* cards e listas */
+.card,
+.item,
+.installment,
+.summary,
+.pill,
+.list {
+  background: rgba(15,23,42,.65) !important;
+  color: #e5e7eb !important;
+}
+
+/* textos */
+.item-title,
+.h1,
+.h2,
+.title {
+  color: #e5e7eb !important;
+}
+
+.subtitle,
+.item-sub,
+.badge,
+.hint {
+  color: #94a3b8 !important;
+}
+
+/* select (mês) */
+select,
+.input {
+  background: rgba(11,18,32,.75) !important;
+  color: #e5e7eb !important;
+  border-color: rgba(148,163,184,.25) !important;
+}
+
+/* evita algo ficar invisível */
+.view {
+  display: block;
+}
+
+.view.hidden {
+  display: none !important;
+}
+
