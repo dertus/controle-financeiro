@@ -1,5 +1,5 @@
 vadd sw.js
-const CACHE = "finance-app-cache-v4";
+const CACHE = "finance-app-cache-v8";
 const ASSETS = [
   "./",
   "./index.html",
