@@ -382,3 +382,7 @@ select,
   display: none !important;
 }
 
+
+/* Links com cara de botão */
+a.tab, a.bottom-btn {
+  text-decoration: none;
