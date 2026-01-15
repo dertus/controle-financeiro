@@ -1,1 +1,16 @@
 add manifest.json
+{
+  "name": "Controle Financeiro",
+  "short_name": "Financeiro",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b1220",
+  "theme_color": "#0b1220",
+  "icons": [
+    {
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAArUlEQVR4nO3aMQ6CMBQF0fn/0uGQkKq0o0k2Yt0k0q2dQ8gq6l0i0gkOe1gqfGd3kqgQAAAAAAAAAAAABwQ9sZc+3b1bYbq3wqk7mBqvG2c0X0uFh2Q0lqkq9y5u0xw2h7m0g7p0Zz2m8J8f2wq6p2w0m1wqgAAAAAAAAAAAAC4Ew8Qb7mC3tWQnAAAAABJRU5ErkJggg==",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
