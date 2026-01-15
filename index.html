@@ -19,11 +19,11 @@
       </div>
     </div>
 
- <nav class="nav-top">
-  <a class="tab" href="#/" data-tab="list">Gastos</a>
-  <a class="tab" href="#/novo" data-tab="novo">Novo</a>
-</nav>
-
+    <!-- LINKS (não buttons) => sempre muda hash -->
+    <nav class="nav-top">
+      <a class="tab" href="#/" data-tab="list">Gastos</a>
+      <a class="tab" href="#/novo" data-tab="novo">Novo</a>
+    </nav>
   </header>
 
   <main class="container">
@@ -34,13 +34,14 @@
           <select id="filter-month" class="input input-compact"></select>
         </div>
         <div class="row-right">
-          <button id="btn-seed" class="btn ghost btn-compact">Exemplos</button>
+          <button id="btn-seed" class="btn ghost btn-compact" type="button">Exemplos</button>
         </div>
       </div>
 
       <div id="summary" class="summary"></div>
 
       <div id="expense-list" class="list"></div>
+
       <div id="empty" class="empty hidden">
         <p>Nenhum gasto ainda. Clique em <b>Novo</b> para adicionar.</p>
       </div>
@@ -50,7 +51,7 @@
     <section id="view-new" class="view hidden">
       <h1 class="h1">Novo gasto</h1>
 
-      <form id="form-new" class="card card-form">
+      <form id="form-new" class="card card-form" autocomplete="off">
         <label class="label">
           Nome do gasto
           <input class="input" id="name" required placeholder="Ex.: Notebook, Mercado, Internet" />
@@ -104,9 +105,9 @@
     <!-- DETALHE -->
     <section id="view-detail" class="view hidden">
       <div class="row">
-        <button class="btn ghost" id="btn-back">← Voltar</button>
+        <button class="btn ghost" id="btn-back" type="button">← Voltar</button>
         <div class="spacer"></div>
-        <button class="btn danger" id="btn-delete">Excluir</button>
+        <button class="btn danger" id="btn-delete" type="button">Excluir</button>
       </div>
 
       <div id="detail-header" class="card card-detail"></div>
@@ -114,8 +115,8 @@
       <div class="row row-tight">
         <h2 class="h2">Parcelas</h2>
         <div class="row-right">
-          <button class="btn ghost btn-compact" id="btn-mark-all">Marcar todas pagas</button>
-          <button class="btn ghost btn-compact" id="btn-unmark-all">Desmarcar</button>
+          <button class="btn ghost btn-compact" id="btn-mark-all" type="button">Marcar todas pagas</button>
+          <button class="btn ghost btn-compact" id="btn-unmark-all" type="button">Desmarcar</button>
         </div>
       </div>
 
@@ -123,19 +124,18 @@
     </section>
   </main>
 
-  <!-- Barra inferior estilo app -->
+  <!-- Barra inferior estilo app (links, não buttons) -->
   <nav class="bottom-nav" aria-label="Navegação">
-    <button class="bottom-btn" data-go="#/" data-tab="list">
+    <a class="bottom-btn" href="#/" data-tab="list">
       <span class="bottom-ico">📄</span>
       <span class="bottom-txt">Gastos</span>
-    </button>
-    <button class="bottom-btn" data-go="#/novo" data-tab="novo">
+    </a>
+    <a class="bottom-btn" href="#/novo" data-tab="novo">
       <span class="bottom-ico">➕</span>
       <span class="bottom-txt">Novo</span>
-    </button>
+    </a>
   </nav>
 
   <script type="module" src="app.js"></script>
 </body>
 </html>
-
